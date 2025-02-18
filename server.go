@@ -3,6 +3,15 @@
 
 package main
 
-func main() {
+import "container/list"
 
+
+
+var myString string = `This is
+a mulit line string`
+
+var myArray list[string] = ["CJ", "Why", "are", "you", "gey?"]
+
+func main() {
+	println(myString)
 }
