@@ -1,6 +1,15 @@
 # PennyWise
 Wisdom with few pennies brings wisdom with many dollars. 
 
+# Go Setup Basics
+
+## Installation
+- Follow the official docs to install for your machine. [Go Installation](https://golang.org/doc/install)
+
+## Environment Setup
+- When creating a new project, run `Go mod init <module_name>` to initialize a new module. Usually the name of your project works here.
+- Then you can install Packages using `go get <package_name>`.
+
 # Features:
 - csv import for transactions
 - login page

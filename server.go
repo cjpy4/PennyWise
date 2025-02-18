@@ -3,15 +3,16 @@
 
 package main
 
-import "container/list"
-
-
-
-var myString string = `This is
-a mulit line string`
-
-var myArray list[string] = ["CJ", "Why", "are", "you", "gey?"]
+import (
+	"net/http"
+	
+	"github.com/labstack/echo/v4"
+)
 
 func main() {
-	println(myString)
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.Logger.Fatal(e.Start(":1323"))
 }
