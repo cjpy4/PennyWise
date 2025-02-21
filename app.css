@@ -1,4 +1,4 @@
-@import "tailwindcss" source("./public/*.{html,js}");
+@import "tailwindcss";
 @plugin "daisyui" {
    themes: retro --default, coffee --prefersdark;
  }

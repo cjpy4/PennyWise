@@ -4,61 +4,41 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
-	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/tursodatabase/go-libsql"
 )
+
+// Handler
+// func transactions(c echo.Context) error {
+// 	return c.File("public/transactions.html")
+// }
 
 func main() {
 
-	// Load .env file
-	err := godotenv.Load()
+	connector, db, dir, err := connectToDB()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Printf("Error connecting to DB: %v\n", err)
+		return
 	}
-
-	// Database credentials are in our private chat
-	dbName := "local.db"
-	primaryUrl := os.Getenv("TURSO_DATABASE_URL")
-	authToken := os.Getenv("TURSO_AUTH_TOKEN")
-
-	dir, err := os.MkdirTemp("", "libsql-*")
-	if err != nil {
-		fmt.Println("Error creating temporary directory:", err)
-		os.Exit(1)
-	}
+	// Clean up resources when main returns.
 	defer os.RemoveAll(dir)
-
-	dbPath := filepath.Join(dir, dbName)
-
-	syncInterval := time.Minute
-
-	connector, err := libsql.NewEmbeddedReplicaConnector(dbPath, primaryUrl,
-		libsql.WithAuthToken(authToken),
-		libsql.WithSyncInterval(syncInterval),
-	)
-
-	if err != nil {
-		fmt.Println("Error creating connector:", err)
-		os.Exit(1)
-	}
 	defer connector.Close()
-
-	db := sql.OpenDB(connector)
 	defer db.Close()
 
 	// createUser(db, "Lando Coderissian")
 	// createUser(db, "CJ Pyethonian")
 	queryUsers(db)
 
+	// Echo Server and Routes
+	// New instance of Echo
 	e := echo.New()
+	// Routes
 	e.Static("/", "public")
+	e.File("/transactions", "public/transactions.html")
+
+    // Start server
 	e.Logger.Fatal(e.Start(":1323"))
+
 }
