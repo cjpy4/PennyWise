@@ -59,6 +59,6 @@ func main() {
 	queryUsers(db)
 
 	e := echo.New()
-	e.File("/", "index.html")
+	e.Static("/", "public")
 	e.Logger.Fatal(e.Start(":1323"))
 }
