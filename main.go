@@ -37,8 +37,10 @@ func main() {
 	// Routes
 	e.Static("/", "public")
 	e.File("/transactions", "public/transactions.html")
+	e.File("/overview", "public/overview-card.html")
+	e.File("/budgets", "public/budgets-table.html")
 
-    // Start server
+	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 
 }
