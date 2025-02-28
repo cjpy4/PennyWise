@@ -35,7 +35,7 @@ func main() {
 	e := echo.New()
 	// Routes
 	e.Static("/", "public")
-	e.File("/transactions", "public/transactions.html")
+	e.File("/transaction", genTransactionHtml(db))
 	e.File("/overview", "public/overview-card.html")
 	e.File("/budgets", "public/budgets-table.html")
 
