@@ -101,10 +101,68 @@
                             </ul>
                             <div class="justify-end card-actions">
                                 <button class="btn btn-primary">Buy Now</button>
+                                <button id="import-csv-button" class="btn btn-primary">Import Transactions</button>
+                                <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
                             </div>
                         </div>
                     </div>
                 </main>
+                <script>
+                    document.addEventListener('DOMContentLoaded',function (event) {
+                        const importButton = document.getElementById('import-csv-button');
+                        const fileInput = document.getElementById('csv-file-input');
+
+                        if (importButton && fileInput) {
+                            importButton.addEventListener('click', function () {
+                                fileInput.click()
+                            });
+
+                            fileInput.addEventListener('change', function (fileEvent) {
+                                console.log('File Import Change...')
+                                let file;
+                                try {
+                                    file = fileInput.target.files[0]
+                                } catch(err) {
+                                    console.log(`cannot get file data. ${err}`)
+                                }
+                                if (file) {
+                                    console.log('File selected:', file.name);
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                    const contents = e.target.result;
+                                    // console.log('File contents:', contents); // Log the contents
+                                    // Process CSV contents by sending to server
+                                    fetch('/upload-csv', {
+                                        method: 'POST',
+                                        headers: {
+                                        'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({'data': contents})
+                                    })
+                                    .then(response => response.text()) // will be html response
+                                    .then(res => {
+                                        // Use HTMX to swap the content of the div
+                                        document.querySelector('.booklist-backdrop').innerHTML = res;
+                                    })
+                                    .catch((error) => {
+                                        const htmlError = '<h2>' + JSON.stringify(error) + '</h2>';
+                                        document.querySelector('.booklist-backdrop').innerHTML = htmlError;
+                                    });
+                                    };
+                                    reader.onerror = function(e) {
+                                    console.error('Error reading file:', e);
+                                    };
+                                    reader.readAsText(file); // Ensure the file is read as text
+                                } else {
+                                    console.error('No file selected');
+                                }
+                            });
+                        } else {
+                            console.error('Button or file input not found');
+                        }
+                    });
+                    
+                </script>
             </div>
 
             <!-- Second row: auto-sized footer -->

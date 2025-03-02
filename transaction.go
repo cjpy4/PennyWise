@@ -2,11 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"encoding/csv"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
+	"strings"
 	"time"
-
 )
 
 
@@ -96,4 +99,45 @@ func genTransactionHtml(db *sql.DB) string {
 
 	return prefix + rows + suffix
 	
+}
+
+func ParseCSV(csvString string) ([]map[string]any, error) {
+    fmt.Printf("typeof(csvString): %T\n", csvString)
+
+    // Check if csvString is valid
+    if csvString == "" {
+        return nil, errors.New("invalid csv string provided")
+    }
+
+    reader := csv.NewReader(strings.NewReader(csvString))
+    var data [][]string
+    fmt.Println("begin Processing...")
+
+    for {
+        record, err := reader.Read()
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            return nil, fmt.Errorf("error processing csv: %v", err)
+        }
+        fmt.Println(record)
+        data = append(data, record)
+    }
+	headers := data[0]
+	jsonData := make([]map[string]any, 0, len(data) - 2)
+	for i, row := range data {
+		if (i == 0) {
+			continue
+		} else {
+			rowMap := make(map[string]any)
+			for j, value := range row {
+				rowMap[headers[j]] = value
+			}
+			jsonData = append(jsonData, rowMap)
+		}
+	}
+
+    fmt.Println("CSV Processing Complete...")
+    return jsonData, nil
 }
